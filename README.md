@@ -1,4 +1,4 @@
-# Project: Recruiter Engagement Analytics Pipeline (MySQL)
+# Recruiter Engagement Analytics Pipeline (MySQL)
 
 ## Overview
 
