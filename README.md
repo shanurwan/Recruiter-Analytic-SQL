@@ -6,7 +6,7 @@ This project analyzes recruiter engagement on a job platform to identify usage p
 
 ## Dataset Description
 
-Table: `recruiter_engagement`
+Table: `Engagement`
 
 | Column Name                 | Data Type | Description                                |
 | --------------------------- | --------- | ------------------------------------------ |
@@ -25,13 +25,13 @@ Table: `recruiter_engagement`
 
 ```sql
 -- Remove duplicate recruiter IDs
-DELETE FROM recruiter_engagement
+DELETE FROM Engagement
 WHERE recruiter_id NOT IN (
   SELECT * FROM (SELECT MIN(recruiter_id) FROM recruiter_engagement GROUP BY recruiter_id) AS temp
 );
 
 -- Handle outliers (applicant quality must be between 0 and 100)
-UPDATE recruiter_engagement
+UPDATE Engagement
 SET avg_applicant_quality = 100
 WHERE avg_applicant_quality > 100;
 ```
@@ -46,14 +46,14 @@ SELECT
   AVG(logins_last_14d) AS avg_logins,
   AVG(job_posts_last_14d) AS avg_job_posts,
   AVG(ai_tool_usage_count) AS avg_ai_usage
-FROM recruiter_engagement;
+FROM Engagement;
 ```
 
 #### b. Top 10 Most Active Recruiters
 
 ```sql
 SELECT recruiter_id, company, logins_last_14d, job_posts_last_14d
-FROM recruiter_engagement
+FROM Engagement
 ORDER BY logins_last_14d DESC
 LIMIT 10;
 ```
@@ -75,16 +75,16 @@ GROUP BY ai_group;
 
 ```sql
 SELECT *
-FROM recruiter_engagement
+FROM Engagement
 WHERE logins_last_14d = 0 AND job_posts_last_14d = 0;
 ```
 
 ### 4. Automation: Create Churn Risk Flag
 
 ```sql
-ALTER TABLE recruiter_engagement ADD churn_risk BOOLEAN;
+ALTER TABLE Engagement ADD churn_risk BOOLEAN;
 
-UPDATE recruiter_engagement
+UPDATE Engagement
 SET churn_risk = CASE
   WHEN logins_last_14d = 0 AND job_posts_last_14d = 0 THEN TRUE
   ELSE FALSE
