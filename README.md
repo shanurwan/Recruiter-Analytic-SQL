@@ -111,8 +111,7 @@ END;
 
 ## Final Notes
 
-This project highlights how SQL alone can deliver meaningful automation, engagement monitoring, and early churn detection in a scalable and production-feasible manner. It’s ideal for showcasing database design, query proficiency, and data storytelling to hiring managers.
-
+This SQL project shows how structured queries and automation can uncover recruiter disengagement patterns, improving operational oversight and recruitment efficiency. It offers scalable monitoring and provides a foundation for deeper analytics or visual dashboards for talent teams.
 ---
 
 **Tags:** SQL, Automation, Churn Prediction, Analytics Pipeline, Data Storytelling, AI Impact, Dashboard Design
