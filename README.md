@@ -45,6 +45,16 @@ WHERE (recruiter_id, last_active_date) NOT IN (
     GROUP BY recruiter_id
   ) AS latest
 );
+```
+
+- Handle Outliers
+  
+```sql
+  -- Applicant quality must be between 0 and 100
+UPDATE Engagement
+SET avg_applicant_quality = 100
+WHERE avg_applicant_quality > 100;
+```
 
 
 ###  KPI Dashboard Queries
