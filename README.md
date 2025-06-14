@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project analyzes recruiter engagement on a job platform to identify usage patterns and early signs of disengagement. It uses a MySQL database to simulate a real-time analytics pipeline with automated insights generation. The goal is to enable business stakeholders to proactively address recruiter inactivity, optimize support interventions, and assess the impact of AI tool usage.
+This project aims to track, monitor, and automate analytics on recruiter engagement activities using MySQL. By building a self-updating audit system, we can highlight signs of disengagement—such as inactivity, poor applicant quality, excessive support tickets, and churn risks. The system stores historical snapshots in an audit table, enabling easy trend analysis and integration with visualization tools.
 
 ## Dataset Description
 
@@ -21,102 +21,59 @@ Table: `Engagement`
 
 ## MySQL Project Objectives
 
-•	Identify disengaged recruiters based on activity thresholds.
+- Identify disengaged recruiters based on custom threshold logic
 
-•	Monitor engagement trends over time.
+- Monitor activity changes over time via delta tracking
 
-•	Enable automated data aggregation for dashboards or reports.
+- Automatically flag high-risk recruiter behaviors for follow-up
 
-•	Improve accountability and data-driven follow-up processes.
+- Enable consistent data flow for reports and dashboards
 
 ## Methodology
-Key SQL procedures and scripts were created to handle:
+The automation framework includes:
 
-### Data Cleaning & Preparation
-- Keep the row with the most recent last_active_date for each recruiter_id and delete the rest
+a. Snapshot Table Creation
+A table `Engagement_audit` was created to store each day’s snapshot of recruiter activity.
 
-```sql
--- Remove duplicate recruiter IDs
-DELETE FROM Engagement
-WHERE (recruiter_id, last_active_date) NOT IN (
-  SELECT * FROM (
-    SELECT recruiter_id, MAX(last_active_date)
-    FROM Engagement
-    GROUP BY recruiter_id
-  ) AS latest
-);
-```
+b. Stored Procedure: `run_recruiter_engagement_snapshot()`
+This procedure compares current recruiter metrics to the latest available snapshot to compute:
 
-- Handle Outliers
-  
-```sql
-  -- Applicant quality must be between 0 and 100
-UPDATE Engagement
-SET avg_applicant_quality = 100
-WHERE avg_applicant_quality > 100;
-```
+- `delta_logins`
+
+- `delta_posts`
+
+- `quality_flag (avg_applicant_quality < 60)`
+
+- `support_flag (support_tickets_last_30d > 5)`
+
+- `churn_risk (logins = 0 and posts = 0)`
+
+The output is stored in `Engagement_audit` with a timestamp.
+
+## Audit Table Schema
+Table name `Engagement_audit`
+
+| Column Name           | Data Type | Description                             |
+| --------------------- | --------- | --------------------------------------- |
+| recruiter\_id         | VARCHAR   | Recruiter unique ID                     |
+| delta\_logins         | INT       | Change in logins since last snapshot    |
+| delta\_posts          | INT       | Change in job posts since last snapshot |
+| quality\_flag         | BOOLEAN   | Flag if avg applicant quality < 60      |
+| support\_flag         | BOOLEAN   | Flag if support tickets > 5 in 30 days  |
+| churn\_risk           | BOOLEAN   | True if both logins and posts are 0     |
+| logins\_last\_14d     | INT       | Current login count (14-day window)     |
+| job\_posts\_last\_14d | INT       | Current job post count (14-day window)  |
+| snapshot\_date        | DATETIME  | Timestamp of this audit snapshot        |
+
+## Sample Output
+
+| recruiter\_id | delta\_logins | delta\_posts | quality\_flag | support\_flag | churn\_risk | snapshot\_date | logins_last_14d | job_posts_last_14d |
+| ------------- | ------------- | ------------ | ------------- | ------------- | ----------- | ---------------| ----------------| -------------------|
+| R1234         | -2            | 0            | TRUE          | FALSE         | FALSE       | 2025-06-16     | 2               | 0                  |
+| R5678         | 0             | 0            | FALSE         | TRUE          | TRUE        | 2025-06-16     | 1               | 0                  |
 
 
-###  KPI Dashboard Queries
 
-#### a. Recruiter Activity Overview
-
-```sql
-SELECT
-  COUNT(*) AS total_recruiters,
-  AVG(logins_last_14d) AS avg_logins,
-  AVG(job_posts_last_14d) AS avg_job_posts,
-  AVG(ai_tool_usage_count) AS avg_ai_usage
-FROM Engagement;
-```
-
-#### b. Top 10 Most Active Recruiters
-
-```sql
-SELECT recruiter_id, company, logins_last_14d, job_posts_last_14d
-FROM Engagement
-ORDER BY logins_last_14d DESC
-LIMIT 10;
-```
-
-#### c. AI Tool Impact on Engagement
-
-```sql
-SELECT
-  CASE WHEN ai_tool_usage_count > 0 THEN 'Used AI Tools' ELSE 'Did Not Use AI Tools' END AS ai_group,
-  AVG(logins_last_14d) AS avg_logins,
-  AVG(avg_applicant_quality) AS avg_quality
-FROM recruiter_engagement
-GROUP BY ai_group;
-```
-
-### 3. Churn Risk Detection
-
-#### Define churn as recruiters with 0 logins and 0 job posts in the past 14 days
-
-```sql
-SELECT *
-FROM Engagement
-WHERE logins_last_14d = 0 AND job_posts_last_14d = 0;
-```
-
-### 4. Automation: Create Churn Risk Flag
-
-```sql
-ALTER TABLE Engagement ADD churn_risk BOOLEAN;
-
-UPDATE Engagement
-SET churn_risk = CASE
-  WHEN logins_last_14d = 0 AND job_posts_last_14d = 0 THEN TRUE
-  ELSE FALSE
-END;
-```
-
-## Key Insights
-
-* Recruiters who actively use AI tools tend to log in more frequently and have higher applicant quality scores.
-* Churn risk is significantly associated with low login and job posting activity.
-* Only \~5-7% of recruiters raised support tickets, suggesting UX or onboarding friction may not be the top reason for churn.
 
 ## Potential Extensions
 
