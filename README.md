@@ -21,22 +21,37 @@ Table: `Engagement`
 
 ## MySQL Project Objectives
 
-### 1. Data Cleaning & Preparation
+•	Identify disengaged recruiters based on activity thresholds.
+•	Monitor engagement trends over time.
+•	Enable automated data aggregation for dashboards or reports.
+•	Improve accountability and data-driven follow-up processes.
+
+## Methodology
+Key SQL procedures and scripts were created to handle:
+
+### Data Cleaning & Preparation
+- Keep the row with the most recent last_active_date for each recruiter_id and delete the rest
 
 ```sql
 -- Remove duplicate recruiter IDs
 DELETE FROM Engagement
-WHERE recruiter_id NOT IN (
-  SELECT * FROM (SELECT MIN(recruiter_id) FROM recruiter_engagement GROUP BY recruiter_id) AS temp
+WHERE (recruiter_id, last_active_date) NOT IN (
+  SELECT * FROM (
+    SELECT recruiter_id, MAX(last_active_date)
+    FROM Engagement
+    GROUP BY recruiter_id
+  ) AS latest
 );
 
--- Handle outliers (applicant quality must be between 0 and 100)
+- Handle Outlier
+
+-- Applicant quality must be between 0 and 100 
 UPDATE Engagement
 SET avg_applicant_quality = 100
 WHERE avg_applicant_quality > 100;
 ```
 
-### 2. KPI Dashboard Queries
+### KPI Dashboard Queries
 
 #### a. Recruiter Activity Overview
 
