@@ -47,16 +47,7 @@ WHERE (recruiter_id, last_active_date) NOT IN (
 );
 
 
-- Handle Outlier
-
-
--- Applicant quality must be between 0 and 100 
-UPDATE Engagement
-SET avg_applicant_quality = 100
-WHERE avg_applicant_quality > 100;
-```
-
-### KPI Dashboard Queries
+###  KPI Dashboard Queries
 
 #### a. Recruiter Activity Overview
 
