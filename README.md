@@ -22,8 +22,11 @@ Table: `Engagement`
 ## MySQL Project Objectives
 
 •	Identify disengaged recruiters based on activity thresholds.
+
 •	Monitor engagement trends over time.
+
 •	Enable automated data aggregation for dashboards or reports.
+
 •	Improve accountability and data-driven follow-up processes.
 
 ## Methodology
@@ -43,7 +46,9 @@ WHERE (recruiter_id, last_active_date) NOT IN (
   ) AS latest
 );
 
+
 - Handle Outlier
+
 
 -- Applicant quality must be between 0 and 100 
 UPDATE Engagement
