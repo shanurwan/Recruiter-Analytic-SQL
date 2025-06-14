@@ -73,13 +73,24 @@ Table name `Engagement_audit`
 | R5678         | 0             | 0            | FALSE         | TRUE          | TRUE        | 2025-06-16     | 1               | 0                  |
 
 
+## Key Features
+Automation-Ready: No manual tracking—run daily via Event Scheduler
 
+Historical Tracking: Delta logic detects behavior changes
+
+Risk Flags: Easy to identify support issues, quality drops, and churn
+
+Extensible: Easily expand logic to include new dimensions (e.g., message response time, conversion rates)
 
 ## Potential Extensions
 
-* Build a scheduled MySQL event to refresh churn risk weekly.
-* Export insights to Power BI or Tableau using MySQL connectors.
-* Integrate this data into a real-time dashboard for customer success teams.
+* Real-Time Notifications (Slack, Email) on critical churn/support spikes
+
+* Dashboard integration (e.g., Power BI for time-series visualizations)
+
+* ML-Based Anomaly Detection for deeper recruiter behavior insights
+
+* Filterable Reports by industry, recruiter role, team, or geography
 
 ## Tools Used
 
@@ -87,9 +98,28 @@ Table name `Engagement_audit`
 * **Faker**: Python library used to generate the dataset (100,000 rows)
 * **Power BI / Tableau** *(optional)*: Visualization layer for non-technical stakeholders
 
-## Final Notes
+## How to use 
+1. Manual Execution
+   
+After updating the `Engagement table` with new data, run:
 
+```sql
+CALL run_recruiter_engagement_snapshot();
+```
+2. Scheduled Execution
+   
+Enable daily automation using MySQL Events:
+
+```sql
+CREATE EVENT IF NOT EXISTS daily_engagement_check
+ON SCHEDULE EVERY 1 DAY
+DO CALL run_recruiter_engagement_snapshot();
+```
+ [Ensure event_scheduler = ON in MySQL server settings]
+## Final Notes
+```
 This SQL project shows how structured queries and automation can uncover recruiter disengagement patterns, improving operational oversight and recruitment efficiency. It offers scalable monitoring and provides a foundation for deeper analytics or visual dashboards for talent teams.
+```
 ---
 
 **Tags:** SQL, Automation, Churn Prediction, Analytics Pipeline, Data Storytelling, AI Impact, Dashboard Design
