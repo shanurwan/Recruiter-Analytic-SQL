@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project aims to track, monitor, and automate analytics on recruiter engagement activities using MySQL. By building a self-updating audit system, we can highlight signs of disengagement—such as inactivity, poor applicant quality, excessive support tickets, and churn risks. The system stores historical snapshots in an audit table, enabling easy trend analysis and integration with visualization tools.
+This project aims to track, monitor, and automate analytics on recruiter engagement activities using MySQL. By building a self-updating audit system, we can highlight signs of disengagement (inactivity, poor applicant quality, excessive support tickets, and churn risks). The system stores historical snapshots in an audit table, enabling easy trend analysis and integration with visualization tools.
 
 ## Dataset Description
 
