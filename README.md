@@ -74,7 +74,7 @@ Table name `Engagement_audit`
 
 
 ## Key Features
-Automation-Ready: No manual tracking—run daily via Event Scheduler
+Automation-Ready: No manual tracking. Run daily via Event Scheduler
 
 Historical Tracking: Delta logic detects behavior changes
 
@@ -86,7 +86,7 @@ Extensible: Easily expand logic to include new dimensions (e.g., message respons
 
 * Real-Time Notifications (Slack, Email) on critical churn/support spikes
 
-* Dashboard integration (e.g., Power BI for time-series visualizations)
+* Dashboard integration (Power BI for time-series visualizations)
 
 * ML-Based Anomaly Detection for deeper recruiter behavior insights
 
